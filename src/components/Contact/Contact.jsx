@@ -1,15 +1,31 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState,useRef } from 'react'
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet'
 import Loader from 'react-loaders'
 import AnimatedLettres from '../Animated/AnimatedLettres'
+import emailjs from '@emailjs/browser'
 import './contact.scss'
 const Contact = () => {
     const [lettreClass, setlettreClass] = useState('text-animated')
+    const FormRef = useRef()
     useEffect(() => {
         setTimeout(async() => {
           setlettreClass('text-animated-hover')
         }, 3000)
       }, [])
+    const sendEmail = (e)=>{
+      e.preventDefault()
+      emailjs.sendForm(
+        process.env.SERVIC_ID,
+        process.env.TEMPLATE_ID,
+        FormRef.current,
+        process.env.PUBLIC_ID,
+      ).then(() => {
+        alert('you just have send an Email, Thank you ')
+        window.location.reload(false)
+      }).catch((err) => {
+        alert('Error, Please try again ')
+      });
+    }
   return (
       <>
     <div className='container contact-page' >
@@ -23,7 +39,7 @@ const Contact = () => {
             don't hesitate to contact me using below form either.
           </p>
           <div className="contact-form">
-            <form >
+            <form ref={FormRef} onSubmit={sendEmail} >
               <ul>
                 <li className="half">
                   <input placeholder="Name" type="text" name="name" required />
